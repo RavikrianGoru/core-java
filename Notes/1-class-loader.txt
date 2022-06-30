@@ -1,0 +1,36 @@
+Java Class Loader
+================
+Java program runs on JVM.
+JVM created byte code/.class files.
+Class loader loads the .class file into the menory.
+
+Build-in ClassLoader Types
+==========================
+1) Bootstrap Class Loader: it loads jdk internal classes from rt.jar and other core classes (i18n.jar).
+   java.util.HashMap.class.getClassLoader()----->null
+						|
+						|
+						|
+2) Extension Class Loader: it loads classes from the jdk extention dir ($JAVA_HOME/lib/ext/*).
+   DNSNameService.class.getClassLoader()------>ExtClassLoader
+						|
+						|
+						|
+3) System/application Class Loader: it loads classes from current classpath. (-cp or -classpath).
+   AnyClassYouCreated.class.getClassLoader()----->AppClassLoader
+
+
+
+Java Class Loading Mechanism
+============================
+The Java platform uses a delegation model for loading classes. 
+The basic idea is that every class loader has a "parent" class loader. 
+When loading a class, a class loader first "delegates" the search for the class to its parent class loader before attempting to find the class itself.
+
+
+if any class to be loaded:
+	1) System/App ClassLoader delegates it to ExtClassLoader
+	2) ExtClassLoader delegates it to Bootstrap ClassLoader
+	3) if Bootstrap ClassLoader finds the class then it loads the class into memory) else ExtClassLoader search the class 
+	4) if ExtClassLoader finds the class then it loads the class into memory) else System/App ClassLoader search the class 
+	5) if System/App ClassLoader finds the class then it loads the class into memory)

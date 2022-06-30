@@ -1,0 +1,354 @@
+			      Java Seminar on 
+			       Project Lombok
+			        Mr. RAGHU
+		---------------------------------------------------
+			Email : javabyraghu@gmail.com
+	       FB: https://www.facebook.com/groups/thejavatemple
+
+*) Java classes: 
+  Java Beans | POJOs |  Entity
+  Controller
+  Service
+  Repository
+  ..etc
+
+=> class, variables,
+  constructors, set/get methods, toString, hashCode with equals
+
+=> Project Lombok : It is open source Java API
+   It generates code for
+   a. constructors
+   b. set/get methods
+   c. toString
+   d. hashCode with equals
+-------------------------------------------------
+package lombok
+-----------------
+@NoArgsConstructor   : It generates default/zero param Constructor
+@AllArgsConstructor  : It generates all params Constructor
+@Getter              : get method for variables
+@Setter              : set method for variables
+@ToString            : override toString method in our class
+@EqualsAndHashCode   :  equals(), hashCode() overriden in our clas
+
+@RequiredArgsConstructor + @NonNull : It generates selected variable Constructor
+
+@Data = @RequiredArgsConstructor + @Getter + @Setter + @ToString + @EqualsAndHashCode
+------------------------------------------------------------
+ I. Manual Approch
+ => Download JAR: https://projectlombok.org/download
+ => Define one java class with lombok annotations
+    Ex: Employee.java
+
+import lombok.*;
+@Setter
+@Getter
+class Employee 
+{
+   String empName;
+}
+
+=> compile : javac -cp lombok.jar Employee.java
+=> profiler : javap Employee.class
+
+//http://www.javadecompilers.com/
+--Generated Code looks like--
+// 
+// Decompiled by Procyon v0.5.36
+// 
+
+class Employee
+{
+    String empName;
+    
+    public void setEmpName(final String empName) {
+        this.empName = empName;
+    }
+    
+    public String getEmpName() {
+        return this.empName;
+    }
+}
+--------------------------------------
+II.** IDE Installation
+ 1. Open Eclipse / STS 
+ 2. Create Simple Maven Project
+ 3. Add Project Lombok JAR
+
+pom.xml
+<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.20</version>
+			<scope>provided</scope>
+		</dependency>
+		
+	</dependencies>
+
+ 4. Write one simple class with annotations
+ package in.nareshit.raghu;
+
+import lombok.AllArgsConstructor;
+//ctrl+shift+O
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class Employee {
+
+	private Integer empId;
+	private String empName;
+	private Double empSal;
+	
+}
+
+*)If it is not working(onetime setup for one IDE)
+> Close your IDE
+> Goto .m2 location of Lombok JAR
+C:\Users\Raghu\.m2\repository\org\projectlombok\lombok\1.18.20
+
+> execute command 
+  java -jar lombok-1.18.20.jar
+    (or)
+  double click on 'lombok-1.18.20.jar'
+
+> Wait for some time for auto-detection of IDE (or) specify location manually
+> Click on install or update 
+> Finish
+> open IDE, continue coding
+
+-------Annotations View--------------------------------------------------------
+1. @NoArgsConstructor : It will generate default constrcutor
+
+package in.nareshit.raghu;
+//ctrl+shift+O
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+public class Employee {
+
+	private Integer empId;
+	private String empName;
+	private Double empSal;
+	
+}
+---Generated code----
+public class Employee {
+
+	private Integer empId;
+	private String empName;
+	private Double empSal;
+
+	public Employee() {
+	     super();
+	}
+	
+}
+-----------------------------------
+2. @AllArgsConstructor : It will gnerate all params constrcutor.
+
+package in.nareshit.raghu;
+
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
+public class Employee {
+
+	private Integer empId;
+	private String empName;
+	private Double empSal;
+	
+}
+--Generated source code---
+public class Employee {
+
+	private Integer empId;
+	private String empName;
+	private Double empSal;
+
+	public Employee(Integer empId,String empName,Double empSal)
+	{
+		super();
+		this.empId=empId;
+		this.empName=empName;
+		this.empSal=empSal;
+	}
+	
+}
+*) If class has zero variables then @AllArgsConstructor will generate default const
+
+@AllArgsConstructor
+public class Employee { }
+
+--Generated code---
+public class Employee {
+	public Employee() {
+	     super();
+	}
+}
+
+*) Ex#
+package in.nareshit.raghu;
+
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+@AllArgsConstructor
+public class Employee {
+   private Integer empId;
+}
+*) 2 constructors are generated 1--default, 1 -- one param const.
+
+
+---Example-------------
+package in.nareshit.raghu;
+
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
+public class Employee {
+
+	private Integer empId;
+	private String empName;
+	
+	
+}
+----------
+package in.nareshit.raghu;
+
+public class Test {
+
+	public static void main(String[] args) {
+		Employee e1 = new Employee(102, "AA");
+		Employee e2 = new Employee();
+		e2.setEmpId(102);
+		e2.setEmpName("AA");
+		
+		//System.out.println(e1);
+		System.out.println(e1.equals(e2));
+	}
+}
+
+--------------------------------------------------------------
+*) @RequiredArgsConstructor : it is used to generate selected variables
+			as param. constructor.
+ex:
+package in.nareshit.raghu;
+
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+public class Employee {
+
+	private Integer empId;
+	
+	@NonNull
+	private String empName;
+	
+	@NonNull
+	private Double empSal;
+	
+	
+}
+*) select variable using @NonNull
+
+--Generated Code---
+public class Employee {
+	private Integer empId;
+	private String empName;
+	private Double empSal;
+	
+	public Employee(String empName,Double empSal)
+	{
+	    super();
+	    this.empName=empName;
+	    this.empSal=empSal;
+
+	}
+	
+}
+*) @RequiredArgsConstructor without any variable having @NonNull
+	Generates Default constrcutor.
+
+@RequiredArgsConstructor
+public class Employee {
+
+	private Integer empId;
+	private String empName;
+	private Double empSal;
+	
+}
+---Generated Code-------------
+public class Employee {
+
+	private Integer empId;
+	private String empName;
+	private Double empSal;
+
+	public Employee()
+	{
+	    super();
+        }
+	
+}
+------------------------------------------
+*) check this case
+@AllArgsConstructor
+@RequiredArgsConstructor
+@NoArgsConstructor
+public class Employee { }
+
+--Example---
+package in.nareshit.raghu;
+
+import lombok.Data;
+
+@Data // set/get, req args const, toString, equals and hashcode
+public class Employee {
+	
+	private Integer empId;
+	private String empName;
+	private Double empSal;
+}
+==================================================================
+https://projectlombok.org/
+
+https://projectlombok.org/setup/intellij
+
+
+https://projectlombok.org/features/all
+
+
+FIS.close()
+FOS.close()
+
+@Cleanup InputStream in = new FileInputStream(args[0]);
+
+finally{
+  in.close();
+}
+
+https://projectlombok.org/features/all

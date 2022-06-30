@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="java_enum_annotation/src"/>
+	<classpathentry kind="src" path="LombokTestApp/src/main/java"/>
+	<classpathentry kind="src" path="manualApproach"/>
+	<classpathentry kind="output" path="LombokTestApp/target/classes"/>
+</classpath>

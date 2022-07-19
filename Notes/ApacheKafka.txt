@@ -1,0 +1,135 @@
+Apache Kafka
+============
+Events streaming platform used to collect, process and store 
+realtime data stream at scale.
+
+Distributed logging, stream processing, pub-scb mesaageing.
+
+Event: a thing that had happen.
+        Combination of notifictions and state.
+state: serialized data structure ex: json, avro,....etc.
+
+Kafka uses (key/value)	data model.
+
+kay may not be unique in kafka.
+=========================================================
+Go to --->Confluent.cloud  site
+		  Login with Google
+		  Will be navigated to https://confluent.cloud/welcome
+
+1) Cluster Provision:
+Create a Kafka cluster
+	Provider: Google Cloud
+	Resion:us-west4
+	Availability:Single Zone
+ClusterName: cluster_0
+Launch 	Cluster.
+
+2) Creat Topics
+Kafka is a collection immutable append-olny logs.
+Primary storage in kafka is topic.
+
+Overview: click on Topics -> Create topics
+Name :poems, prtitions:6
+click on topic which is created--> message-->
+key:1
+value:"All that isgold doest not gilletr"
+produce.
+select offset: 0/partion 3
+	then we can see the msg which we just written.
+Produce a few more msgs.
+
+	
+Partion: topics are the primary component for storage in kafka.
+topics are broken down in small components called partition.
+when we write a msg to a kafka topic, that msg is actually stored on one of the topic's partitions.
+
+The msg is routed to specific partion based on the key of that message.
+
+We can produce many ways to produce msgs/data to kafka topics.
+1) Web Console
+2) CLI
+3) JavaAPIs
+.... etc
+
+Click on "CLI and Tools" and set up required 
+1) open cmd prompt
+	> wsl --install
+	> wsl --list --online
+	> wsl --install -d Ubuntu-20.04
+	Ubuntu-20 prompt:
+	user:ravi
+	pwd: Ravi@100
+	> wsl -l -v
+	> wsl --set-default-version 2
+2) Open two ubunto terminals
+install latest confluent
+> curl -sL --http1.1 https://cnfl.io/cli | sh -s -- latest
+Set Path
+> vi ~/.pam_environment
+  PATH=\home\ravi\bin:$PATH
+  save ---> !wq
+3) > ./bin/confluent update
+   > ./bin/confluent login --save
+   Email:ravikirangoru@gmail.com
+   Do authentication
+4) > ./bin/confluent environment list
+	> ./bin/confluent environment use env-zm6pv7
+5) >  ./bin/confluent kafka cluster list
+	> ./bin/confluent kafka cluster  use lkc-380w6m 
+6) > ./bin/confluent api-key create --resource	lkc-380w6m
+It may take a couple of minutes for the API key to be ready.
+Save the API key and secret. The secret is not retrievable later.
++---------+------------------------------------------------------------------+
+| API Key | 5GFOCN6GJKHUOXVE                                                 |
+| Secret  | UN6AWzGYs/AbQvKE162s60/b+XKdxfvtkUyCxHaeRTGSMrRTOAJGvDmLEsKuP9WC |
++---------+------------------------------------------------------------------+
+
+7) > ./bin/confluent api-key use 5GFOCN6GJKHUOXVE --resource lkc-380w6m
+
+*) Open another ubunto terminal
+Type the bow cm in two termnals
+> ./bin/confluent kafka topic create test-topic
+> ./bin/confluent kafka topic list
+
+8) >./bin/confluent kafka topic produce test-topic
+"Ravi"
+"Kiran"
+"Devi"
+ctrl+C
+8) > ./bin/confluent kafka topic consume -b test-topic
+
+9) Generate a client config
+  > ./bin/confluent kafka client-config create <LANGUAGE> --api-key=<API_KEY> --api-secret=<API_SECRET>
+
+Ex: confluent kafka client-config create java --api-key=5GFOCN6GJKHUOXVE --api-secret=UN6AWzGYs/AbQvKE162s60/b+XKdxfvtkUyCxHaeRTGSMrRTOAJGvDmLEsKuP9WC
+
+====================================
+Topics: same like table in relation DB.
+ - Named container for similar events
+	Systems containe lots of topics
+	Can duplicate data between topics
+ - Durable logs of events
+	Append only
+	Can only seek by offset, not indexed
+ - Events are immutable
+ 
+Kafka msgs/events can gone based on certaine time(expiry) , size: Retention period.
+Retention period is configurable.
+====================================
+partition:
+kafka is for distributed system.
+Topics are sub divided in to many partitions. Can stored onmultilt nondes on cluster.
+
+If msgs/events has no key then all msgs/events are distributed/stored in different partition based on round robbin.
+
+if msg has key then apply hash then mod of number of partitions available.
+
+================================
+ 
+Hands on partition
+
+================================
+Broker
+a node in kafka process.
+

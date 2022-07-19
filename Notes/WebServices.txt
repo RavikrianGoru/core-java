@@ -1,0 +1,91 @@
+Web Services by Raghu:
+=====================
+Communication between two application through http request and response (with http status code) manner: Web Service.
+Two Applications can be developed in same or different programming languages.
+Two Application can be deployed in same or different servers.
+Each application can have Presentation, Service, Data Access and Integration Layers for communicate with another.
+Each application can be Provider/Consumer or Both.
+
+Http Status Codes:
+	1xx---Information
+	2xx---Success
+	3xx---Redirect
+	4xx---client side errors
+	5xx---Server side errors
+
+	
+Webservice Types:
+================
+I) SOAP : SOA pattern
+II) Rest : CP and FC pattern
+
+1) SOA - Service Oriented Architecture Design Pattern <--- xml as mediator language.
+		i) Service Provider   <--- Publish Operation(one time) [skeleton]
+		ii) Service Consumer  <--- Find Operation(one time) [stub]
+		iii) Registery & Discovery Respository <--- Bind Operation(multiple times)[ XML Documentation ]
+
+   Execution Steps:
+		1) Define service provider application. Some logic , methods, class to provide service.[ Skeleton ]
+		2) Execute publish operation which converts skeleton logic to XML format[Documentayion], if any modification in skeleton : republish required.
+		3) Repository is memory location in cloud env/internet. it holds every service with unique id.
+			Ex: 
+			Service Name 		: EMP-SER-055
+			Location of service : http://85.4.56.1:6578
+			inputs				: int, int ,double
+			outputs				: double
+		4) Service Consumer executes "find" operation 
+			i) Go to repository
+			ii) Search for service by service id.
+			iii) read service
+			iv)Generate stub
+			Stub : supporting code (classes in java) to make http request to provide pplication.
+		5) By using stubs, define logic(classe) whihc makes HTTP request(XML) and gets HTTP Response(XML) back. This is called bind operation.
+	
+2) FC - Front Controller Design Patter
+		i) Client machine makes request over browser/mobile app/machine/... which will be sent to FrontController.
+		ii) In server, FC behaves like Entry and Exit point.
+		iii) FC is a servlet(mostly predefined) which must be configured in web.xml using directory match URL pattern.[/rest/*]
+				Sample URL patterns
+					1) Exact Mach: /ab, /ad/x/1
+					2) Extension Match: *.adb, *pdf, *.jsp
+					3) Directory Match: /ab/*, /ab/x/*
+		iv) Based on URL match, FC identifies one service provider class. It will execute req and returns a final resp. called Entity.
+		v) Entity can not be transferred over n/w. It will be wrapped into Response object.
+		vi) Finally, FC will transfer Response to client Machine.
+		
+*) If FC is not used then no of operation = no of servlets.
+*) Every servlet will occupy more memory for its super classes, http rquest, Response, Config, Context, Listner, Filters... etc.
+
+3) CS or CP - Client-Server or Consumer- Provider Design Pattern 
+		In Webservice, Each application can have Presentation layer(UI/ visible logic), Service Layer(Business logic), Data Access Layer(DB operations), and Integration Layer(provider code/skeleton and consumer code/stub).
+		Integration Layer which connected to Service Layer in application-1 will connect to another in application-2.
+
+======================================
+Rest Web Services= CP and FC patterns
+======================================
+
+Web services types:
+	1) SOAP --- OLD---- JAX-WS- Java API XML for Web Service
+	2) ReST --- NEW---- JAX-RS- Java API XML for Rest Service
+
+ReST-> Representational(Global Format) State(Data) Transfer(Send & Receive).
+
+Global Data formats are XML and JSON.
+XML or JSON data can not be sent over the n/w. So, ReST uses HTTP to transfer.
+
+JAX-RS is a specification provided by Sun MicroSystems.
+Jersey, RestEasy.... are implementations by 3rd party. (API jars)
+
+Jersey API for JAX-RS
+		jersey 1.x ----> web.xml based
+		jersey 2.x ----> Annotation & java code based)
+	
+
+Web Service: 
+	1) Implementations(services)
+	2) Security (username & pwd)
+	3) Role- Restrictions
+	
+
+EX-1
+	

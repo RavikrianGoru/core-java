@@ -1,0 +1,509 @@
+Java 8 Features: Introcuded to enable procedural/functional programmin with lambda expression.
+===============				to write concise code
+							to enable paraller processing.
+1) Lambda expressions.
+2) Stream API
+3) Functional Interface
+4) default and static methods in interfaces.
+5) Predicate, Function, Consumer & Supplier are predefined interfaces
+6) :: operator for method reference & constructor reference
+7) Date and Time API(Joda API)
+8) Optional class
+8) forEach(Consumer) in Iterable interface
+9) Java IO, Collections improvements.
+10)Nashorn JavaScript engine
+....etc
+* We can write and execute main(-) method from class, abstract class, enum, interface from jdk.1.8 onwards.
+
+
+
+Lambda Expression: Nameless, without return type, without modifiers. Sometimes:Compiler can guess the type of paramenter automatically.
+=================
+----------------------------------Normal method----------------------------------
+public void m1(int a, int b)
+{
+	System.out.println("Hello");
+}
+----------------------------------Lambda Expression------------------------------
+(int a, int b)->System.out.println(a+b);
+(a,b)->System.out.println(a+b);
+---------------------------------------------------------------------------------
+
+
+----------------------------------Normal method----------------------------------
+public void m1(int a, int b)
+{
+	retun a+b
+}
+----------------------------------Lambda Expression------------------------------
+(int a, int b)->{ return a+b;};
+(a,b)->System.out.println(a+b);
+---------------------------------------------------------------------------------
+
+FI==> Functional Interface: an interface with single abstract method. We can apply lambda expression for functional interfaces.
+Runnable==>run()
+Comparable==>compareTo()
+Comparator==>compare()
+Callable==>call()
+
+
+0) Differences between abstract class and inteface jdk1.8 onwards?
+Ans: 
+Interface:
+	1) variables-> only public static final variables allowed.
+		int a = 10;
+		public static final a =10;
+	2) No constructor: constructor is for initializing non-static variables.: no state of object
+	3) No blocks-> instance and static blocks
+	4) Allows abstract methods, default, static methods.
+	5) supports multiple inheritance
+	6) Allows object class methods as abstract method.
+	
+Abstarct class:
+	1) variables -> private/public/final/static/non-static
+	2) Can have constructor:state of object
+	3) Can have blocks-> instance and static blocks 
+	4) Allows abstract, implemented methods, static methods.
+	5) not supports multiple inheritance 
+	6) Object class methods can be override
+=============================================
+Functional Programming: Passing a function to another function without creating object.	
+* if need to pass only one operation implementation logic as argument to a method then FP.
+* if need to pass an object state as argument to a method then OOPS.
+
+1) Functional interface: An interface with exactly one abstract method.
+	it can have one or more public default, static methods.
+	* We should use @FunctionalInterface annotation at class level.-recommended not mandatory
+	* Used for functional programming, labda expression, method references.
+	* we can declare java java.lang.Object class methods as abstract methods.
+	
+Ex: 	
+@FunctionalInterface
+interface App1I 
+{
+	public abstract void m1();
+
+	//Declaration of the below abstract methods form Object class are allowed in FI
+	public abstract int hashCode();
+	public abstract String toString();
+	public abstract boolean equals(Object o);
+	
+	public default void m2() {
+		System.out.println("I-default-m2()");
+	}
+
+	public default void m3() {
+		System.out.println("I-default-m3()");
+	}
+
+	public static void m4() {
+		System.out.println("I-static-m4()");
+	}
+
+	public static void m5() {
+		System.out.println("I-static-m5()");
+	}
+}
+
+* Functional interface can be used in inheritance. one functionla interface can extends another functional interface but must have only one abstract method.
+* Can overload default methods 
+* Can override public default methods
+================================================
+2) Functional Interace in Multithreading concept
+Ex:
+		//FI-Lambda Expression
+		Runnable r=()->{ for(int i=1;i<=10;i++) {System.out.println("FI runnable");}};
+		Thread t1 = new Thread(r);
+		t1.start();
+Ex: 
+		Callable<Integer> c1=()->{
+			for(int i=0;i<=9;i++)
+			{
+				System.out.println("FI callable");
+			}
+			return 50;
+		};
+		try {
+			System.out.println(c1.call());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+3) FI in Collections
+Ex:
+		ArrayList<Integer> al = new ArrayList<>();
+		al.add(10);
+		al.add(150);
+		al.add(70);
+		al.add(5);
+		al.add(100);
+
+		Collections.sort(al,(a,b)->{return a<b?1:-1;});
+		System.out.println("All elements from list after sorting");
+		al.forEach(System.out::println);
+
+		System.out.println("Print even numbers only");
+		al.stream().filter(x->x%2==0).collect(Collectors.toList()).forEach(System.out::println);
+
+Note: sort All employees based on eno/ename/sal....etc.
+		Collections.sort(empList, (e1,e2)-> (e1.getEno()<e2.getEno())?-1:(e1.getEno()>e2.getEno())?1:0);
+		Collections.sort(empList, (e1,e2)-> e1.getEname().compareTo(e2.getEname()));
+
+Note: if an interface has only one abstract method[Functional interface] we can write lambda expression.
+	  if an interface has only one abstract method or n-number of abstract methods we can write annonymus implementations.
+================================================
+4)  default and static methods in interface: java 1.8v
+	private methods in interface : java 1.9v
+
+Default method: ---> applicable for interface only.
+		 	If we want to add new method without effecting any implementation classes then we write default method in interface.
+			All implemented class have this default method access.
+			Implemented class can override default method with out default keyword.
+			we can not write default methods of Object class methods in interface. such as equals(),hashCode(),toString(-)....etc
+			If same default method in two interfaces and a class implementing both interfaces then it should override default method else compile time error due to diamond problem.
+
+Static method:	---> applicable for enums, interface, classes and abstract classes.
+			we can write static method in interface and it can be accessed by interfaceName.methodName() only.  
+			As it is class level and it can not be accessed in child classes.
+			we can write the same static method in implemented class and access.(method hiding).
+			If you want to have all methods to be static methods then better to write in interface as class is costly than interface.
+			Ex: all utility will have static methods and should be placed in interface.
+=================================================
+5) Predefined Functional Interfaces: java.util.function.*
+	Predicate(I) -----> public abstract boolen test(T t); ---> take input perform some condition then return boolean value
+	Function<T,R>-----> public abstract R apply(T t); ----> take input perform some operation then return result.
+	Consumer<T> -----> public abstract void accept(T t) ---> take input do operations but no return value.
+	Supplier<R> ------ public abstract R get(); ----> takes no input only supply/return output.
+
+Two args FIs:	
+	BiPredicate
+	BiFunction
+	BiConsumer
+
+Primitive FIs:	
+	XxxPredicate,XxxFunction,XxxCosumer.... etc
+
+//Predicate<T> ---- return boolean always
+
+		System.out.println("---------Predicate<T>---------");
+		//is even number or not
+		//required int to Integer convertion, Interger to int converion internally happs: performance issue.
+		Predicate<Integer> p =x->x%2==0;
+		System.out.println("is 4 even number:"+p.test(4));
+
+		//list all employee's sal >3000
+		empList.stream().filter(e->e.sal>3000d).forEach(System.out::println);
+		
+		int[] nums= {1,2,5,6,8,9,12,16,18,20};
+		Predicate<Integer> p1=i->i%2==0;
+		Predicate<Integer> p2=i->i%4==0;
+
+		//Print all number which are divisible by 2 & 4
+		System.out.println("Print all number which are divisible by 2 & 4");
+		System.out.println("====p1.and(p2).test(a)====");
+		IntStream.of(nums).filter(a->p1.and(p2).test(a)).forEach(System.out::println);
+
+		//Print all number which are divisible by 2 or 4
+		System.out.println("Print all number which are divisible by 2 or 4");
+		System.out.println("===a->p1.or(p2).test(a)===");
+		IntStream.of(nums).filter(a->p1.or(p2).test(a)).forEach(System.out::println);
+
+		//Print all number which are divisible by 2
+		System.out.println("Print all number which are divisible by 2");
+		System.out.println("====p1.negate().test(a)===");
+		IntStream.of(nums).filter(a->p1.negate().test(a)).forEach(System.out::println);
+
+//Function<T,R>	---- return R
+
+		System.out.println("---------Function<T,R>---------");
+		//square of  number
+		Function<Integer,Integer> f=(x)->x*x;
+		System.out.println("4^2="+f.apply(4));
+		
+		//Upper Case
+		Function<String,String> f1=x->x.toUpperCase();
+		System.out.println("Upper case of \'ravi\' --> "+f1.apply("ravi"));
+		
+int[] nos= {1,2,3};
+		Function<Integer,Integer> fun1=x->x*2;
+		Function<Integer,Integer> fun2=x->x*x*x;
+
+		System.out.println("====fun1.andThen(fun2).apply(x)====");
+		IntStream.of(nos).mapToObj(x->fun1.andThen(fun2).apply(x)).forEach(System.out::println);
+		System.out.println("====fun1.compose(fun2).apply(x)====");
+		IntStream.of(nos).mapToObj(x->fun1.compose(fun2).apply(x)).forEach(System.out::println);
+
+//Consumer<T> ----- return void
+		System.out.println("====Consumer<T>====");
+		Consumer<String> con1=x->{System.out.println(x);};
+		con1.accept("Ravi");		
+
+//Supplier<R> ----- return R
+		System.out.println("====/Supplier<R>====");
+		Supplier<Date> sup1=()->{return new Date();};
+		System.out.println(sup1.get());
+	
+		Supplier<String> sup2=()->{
+			String otp="";
+			for(int i=0;i<=6;i++)
+			{
+				otp+=(int)(Math.random()*10);
+			}
+			return otp;
+		};
+		System.out.println("OTP is "+sup2.get());
+
+//BiPredicate
+		BiPredicate<Integer, Integer> bip1 = (x,y) -> (x+y)%2==0;
+		System.out.println("Sume of (5,4) is even or not:"+ bip1.test(5, 4));
+//BiFunction
+		BiFunction<Integer, Integer, Integer> bifun1 = (x,y)-> x*y;
+		System.out.println("Mul of (5,4) =:"+ bifun1.apply(5, 4));
+//BiConsumer
+		BiConsumer<Integer, Integer> bicon1=(x,y)->{System.out.println(x+"--->"+y);};
+		bicon1.accept(5, 4);
+
+//IntPredicate
+		// to improve performance: no need of casting int to Integer, Integer to n
+		IntPredicate ip=x->x%2==0;
+		System.out.println(ip.test(8));
+
+//DoublePredicate
+//LongPedicate
+//BooleanPerficate
+//FloatPedicate
+.....		
+
+//IntToDoubleFunction
+		IntToDoubleFunction idF=x->x*5.8;
+		System.out.println(idF.applyAsDouble(5));
+
+//IntFunction
+//DoubleFunction
+//LongFunction
+//IntToLongFunction...
+
+//ToIntFunction
+//ToDoubleFunction
+...
+
+//ToIntBiFunction
+//ToDoubleBiFunction
+....
+
+//IntConsumer
+//DoubleConsumer
+//LongConsumer
+//ObjDoubleConsumer
+//ObjLongConsumer
+//ObjIntConsumer
+....
+
+
+//Supplier
+//XXXSuplier--> IntSupplier, BooleanSupplier, LongSupplier, DoubleSupplier....
+
+
+if input and out types are same in Function<T,R> interface. UnaryOperator is child if Function<T,R>.
+	UnaryOperator<T>
+	IntUnaryOperator
+	DoubleUnaryOperator
+	LongUnaryOperator 
+	....
+
+
+BinaryOperator<T> child of BiFunction<T,T,T>	all ( 2 inputs and 1 output) types are same
+IntBinaryOperator
+DoubleBinaryOperator
+LongBinaryOperator....
+
+
+
+	
+	
+
+===================================================
+6) Method and Constructor reference ::
+   :: operator is alternative to lambda expression.
+   Code resuability.
+   If the method is static method then ClassName::methodName()
+   If the method is non-static method then objectName::methodName();
+   Methods name can be different but method arguments must be same with FI's method.
+   
+Ex:
+
+		package j8features;
+		
+		import java.util.concurrent.Callable;
+		
+		interface FIInf {
+			void add(int a, int b);
+		}
+		
+		class Sample
+		{
+			Sample()
+			{
+				System.out.println("Sample-constructor");
+			}
+		}
+		interface FIInter {
+			public Sample get();
+		}
+		
+		class Emp
+		{
+			Emp()
+			{
+				System.out.println("Ename:");
+			}
+			Emp(String ename, Integer eno, String addr)
+			{
+				System.out.println("Ename:"+ename);
+				System.out.println("eno:"+eno);
+				System.out.println("addr:"+addr);
+			}
+		}
+		interface FIInter1 {
+			public Emp get(String ename, Integer eno, String addr);
+		}
+		
+		public class MethodAndConstructorReference {
+		
+			public static void sum(int a, int b) {
+				System.out.println(a + b);
+			}
+		
+			public static void m1Run() {
+				System.out.println("m1Run()");
+			}
+		
+			public int m1Call() {
+				System.out.println("m1Call()");
+				return 0;
+			}
+		
+			public static void main(String[] args) throws Exception {
+				
+				//Runnable r = ()->{System.out.println("Smoething");};
+				Runnable r = MethodAndConstructorReference::m1Run;
+				Thread t1 = new Thread(r);
+				t1.start();
+		
+				MethodAndConstructorReference obj = new MethodAndConstructorReference();
+				//Callable<Integer> c = ()->{System.out.println("Smoething"); return 0;};
+				Callable<Integer> c = obj::m1Call;
+				c.call();
+				System.out.println("Main Method");
+				
+				//FIInf i =(a,b)->a+b;
+				FIInf i = MethodAndConstructorReference::sum;
+				i.add(10, 20);
+				
+				//FIInter1 i1=(ename,eno,addr)->new Emp(ename,eno,addr); 
+				FIInter1 i1=Emp::new;
+				i1.get("ravi",101,"Gnt");
+				
+				
+			}
+		
+		}
+=================================================================
+7) Stream: java.util.stream.*;
+
+Collection: to represent group of object as a single entity
+Stream: to process objects from collection
+
+.stream()----------------> get stream object from collection
+	.filter(-)----------------> Predicate---> some conditions on stream elements
+	.map(-)--------------------> Function----> some operations on stream elements
+	.collect(-)---------------> collect elements
+		Collectors.toList()
+		Collectors.toSet()
+		Collectors.toMap()
+	.count()------------------> no of leements in long type.
+	.sorted()-----------------> natural sorting order.
+	
+	.min(Comparator)------------> min always gets 1st element from sorted based on Comparator
+	.max(Comparator)------------> max always gets last element from sorted based on Comparator
+	
+	.forEach(Consumer)----------> pass "System.out::println" as consumer arg.
+	
+	.toArray(IntFunction<A[]> generator) ---------return specifid arrya Integer[], String[], Boolean[]..... etc
+	
+==================================================================
+8) Date & Time API(JODA API) --------> java.time.*
+
+LocalDate:
+		LocalDate date = LocalDate.now();
+		System.out.println(date);
+		int dd=date.getDayOfMonth();
+		int mm =date.getMonthValue();
+		int yyyy=date.getYear();
+
+LocalTime:
+		LocalTime time = LocalTime.now();
+		System.out.println(time);
+		int hour=time.getHour();
+		int minute=time.getMinute();
+		int seconds=time.getSecond();
+		int nonos=time.getNano();
+
+LocalDateTime:
+		LocalDateTime dateTime= LocalDateTime.now();
+		System.out.println(dateTime);
+
+		LocalDateTime dt = LocalDateTime.of(1987, 02, 02, 12, 37);
+		System.out.println(dt);
+		
+		dt.plusYears(-)
+		dt.plusXXX(-) ----> methods for adding or substracting years,months, days, minutes, seconds.... etc
+
+Period:		
+		LocalDate bday=LocalDate.of(1987, 02, 01);
+		LocalDate now=LocalDate.now();
+	
+		Period p = Period.between(bday,  now);
+		System.out.println(p);
+		p.getXXX()-------> get years,months, days.
+
+Year:
+		Year y = Year.of(1987);
+		y.isLeap() --- boolean
+ZonedDateTime and ZoneId:
+		ZoneId zid=ZoneId.systemDefault();
+		System.out.println(zid);
+		ZoneId la = ZoneId.of("America/Los_Angeles");
+		ZonedDateTime zdate =ZonedDateTime.now(la);
+		System.out.println(zdate);
+
+
+
+Stream operatins:
+	1) Terminal Operations
+		a) forEach()
+		b) toArray()
+		c) reduce()
+		d) collect()
+		e) min(), max(), count()
+		f) anyMatch(), allMatch(), nonMatch()
+	2) Intermediat operatins		
+		a) filter()
+		b) peek()
+		c) map()
+		d) distinct()
+		e) sorted()
+		f) limit()
+		g) skip()
+	3) Short Circute Operations
+		a) findFirst()
+		b) findAny()
+		e) anyMatch(),allMatch(),nonMatch()
+		f) limit()
+=======================================================================
+9) 
+
+
+
+   
+   

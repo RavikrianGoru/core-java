@@ -13,9 +13,9 @@ Java 8 Features: Introcuded to enable procedural/functional programmin with lamb
 9) Java IO, Collections improvements.
 10)Nashorn JavaScript engine
 ....etc
+
 * We can write and execute main(-) method from class, abstract class, enum, interface from jdk.1.8 onwards.
-
-
+	Ref: JavaMainMethodExecution
 
 Lambda Expression: Nameless, without return type, without modifiers. Sometimes:Compiler can guess the type of paramenter automatically.
 =================
@@ -31,13 +31,13 @@ public void m1(int a, int b)
 
 
 ----------------------------------Normal method----------------------------------
-public void m1(int a, int b)
+public int m1(int a, int b)
 {
 	retun a+b
 }
 ----------------------------------Lambda Expression------------------------------
 (int a, int b)->{ return a+b;};
-(a,b)->System.out.println(a+b);
+(a,b)->a+b;
 ---------------------------------------------------------------------------------
 
 FI==> Functional Interface: an interface with single abstract method. We can apply lambda expression for functional interfaces.
@@ -144,6 +144,7 @@ Ex:
 
 		System.out.println("Print even numbers only");
 		al.stream().filter(x->x%2==0).collect(Collectors.toList()).forEach(System.out::println);
+		al.stream().filter(x->x%2==0).forEach(System.out::println);
 
 Note: sort All employees based on eno/ename/sal....etc.
 		Collections.sort(empList, (e1,e2)-> (e1.getEno()<e2.getEno())?-1:(e1.getEno()>e2.getEno())?1:0);
@@ -183,7 +184,7 @@ Two args FIs:
 Primitive FIs:	
 	XxxPredicate,XxxFunction,XxxCosumer.... etc
 
-//Predicate<T> ---- return boolean always
+//Predicate<T> ---- return boolean always------ test(-)
 
 		System.out.println("---------Predicate<T>---------");
 		//is even number or not
@@ -208,12 +209,12 @@ Primitive FIs:
 		System.out.println("===a->p1.or(p2).test(a)===");
 		IntStream.of(nums).filter(a->p1.or(p2).test(a)).forEach(System.out::println);
 
-		//Print all number which are divisible by 2
+		//Print all number which are not divisible by 2
 		System.out.println("Print all number which are divisible by 2");
 		System.out.println("====p1.negate().test(a)===");
 		IntStream.of(nums).filter(a->p1.negate().test(a)).forEach(System.out::println);
 
-//Function<T,R>	---- return R
+//Function<T,R>	---- return R-------apply(-)
 
 		System.out.println("---------Function<T,R>---------");
 		//square of  number

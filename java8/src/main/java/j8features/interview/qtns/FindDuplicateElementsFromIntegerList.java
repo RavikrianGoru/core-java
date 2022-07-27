@@ -22,6 +22,7 @@ public class FindDuplicateElementsFromIntegerList {
 
 		System.out.println("-----distinct elements----");
 		IntStream.of(1,4,3,2,43,2,3).distinct().forEach(System.out::println);
+		
 	}
 
 }

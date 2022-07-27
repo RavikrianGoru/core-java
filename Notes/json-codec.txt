@@ -1,0 +1,91 @@
+JSON: JavaScript Object Notation
+	It is a process of object representation in JavaScript.
+	it is light weight object format.
+Ex:
+	{
+		"key": value,..
+	}
+
+Java classes:
+============
+class Employee
+{
+	int eid;
+	String ename;
+	Double sal;
+	Address addr;
+	List<String> qualifications;
+	Set<String> contactNumbers;
+	
+}	
+class Address
+{
+	String street;
+	String drNo;
+	String pin;
+	String state;
+}
+
+Java Object:
+===========
+Employee emp = new Employee(
+						100,
+						"Ravi",
+						25000.00,
+						new Address("abc street", "8-1-87", "5999002", "AP"),
+						Arrays.asList("BTesh","MBA"),
+						Stream.of("1234567890","0987654321").collect(Collectors.toSet());
+
+JSON object:
+===========
+{
+	"eid":100,
+	"ename":"Ravi",
+	"sal":25000.00,
+	"addr": {
+				"street":"abc street",
+				"drNo":"8-1-87",
+				"pin": "599002",
+				"state":"AP"
+			}
+	"qualifications": ["BTech", "MBA"],
+	"contactNumbers": ["1234567890","0987654321"]
+}
+==========================================================
+JACLSON is an API used to perform json to java object and vice versa.
+i.e json <==> java object
+
+Ref:jsonapiapp
+1. Create maven quick start project
+2. Add java comipler plugin and update java 1.8 & add jackson-databind maven dependency
+3. Cleare Employee class & Address classes , add setter, getters, hashCode,equals, constructors & toString method.
+4. Convert Java object to JSON
+	ObjectMapper mapper = new ObjectMapper();
+	To get json string:
+		String jsonResult=mapper.writeValueAsString(javaObject);
+	To get java obj from json 
+		List<Employee> respObj=mapper.readValue(resp, List.class);
+		System.out.println(respObj);
+		
+	To get json string in fomatted form:
+		String jsonResult=mapper.writerWithDefaultPrettyPrinter().writeValueAsString(javaObject);
+	To get java obj from json 
+		List<Employee> respObj=gson.fromJson(respJson, List.class);
+		System.out.println(respObj);
+
+=====================================
+Encoding and Decoding we can use java8 util Base64 class or commons-codec API.
+=====================================
+		String originalInput="HelloWorld";
+		String encodedString=Base64.getEncoder().encodeToString(originalInput.getBytes());
+		
+		byte [] a=Base64.getDecoder().decode(encodedString);
+		System.out.println(originalInput);
+		System.out.println(encodedString);
+		System.out.println(new String(a));
+=====================================
+
+
+
+
+

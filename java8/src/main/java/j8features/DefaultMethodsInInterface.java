@@ -73,9 +73,8 @@ public class DefaultMethodsInInterface
 			All implemented class have this default method access.
 			Implemented class can override default method with out default keyword.
 			we can not write default methods of Object class methods in interface. such as equals(),hashCode(),toString(-)....etc
-			If same default method in two interfaces and a class implementing both interfaces then it should override default method else compile time error due to diamond problem.
-
-		 
+			If same default method in two interfaces and a class implementing both interfaces then it should override default method 
+			else compile time error due to diamond problem.
 		 */
 	}
 

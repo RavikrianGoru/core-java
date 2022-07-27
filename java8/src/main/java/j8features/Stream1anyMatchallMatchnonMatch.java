@@ -22,7 +22,6 @@ public class Stream1anyMatchallMatchnonMatch {
 		boolean nonMatchNegative = IntStream.range(1, 11).noneMatch(x->x==5);
 		System.out.println("1-10 elemements stream->nonMatch =5 =" + nonMatchNegative);
 		
-
 	}
 
 }

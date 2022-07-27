@@ -81,7 +81,6 @@ public class PredefinedFunctionInterfaces {
 int[] nos= {1,2,3};
 		Function<Integer,Integer> fun1=x->x*2;
 		Function<Integer,Integer> fun2=x->x*x*x;
-
 		System.out.println("====fun1.andThen(fun2).apply(x)====");
 		IntStream.of(nos).mapToObj(x->fun1.andThen(fun2).apply(x)).forEach(System.out::println);
 		System.out.println("====fun1.compose(fun2).apply(x)====");

@@ -1,6 +1,6 @@
 Web Services by Raghu:
 =====================
-Communication between two application through http request and response (with http status code) manner: Web Service.
+Communication between two applications through http request and response (with http status code) manner: Web Service.
 Two Applications can be developed in same or different programming languages.
 Two Application can be deployed in same or different servers.
 Each application can have Presentation, Service, Data Access and Integration Layers for communicate with another.
@@ -38,8 +38,8 @@ II) Rest : CP and FC pattern
 			ii) Search for service by service id.
 			iii) read service
 			iv)Generate stub
-			Stub : supporting code (classes in java) to make http request to provide pplication.
-		5) By using stubs, define logic(classe) whihc makes HTTP request(XML) and gets HTTP Response(XML) back. This is called bind operation.
+			Stub : supporting code (classes in java) to make http request to provide application.
+		5) By using stubs, define logic(classes) which makes HTTP request(XML) and gets HTTP Response(XML) back. This is called bind operation.
 	
 2) FC - Front Controller Design Patter
 		i) Client machine makes request over browser/mobile app/machine/... which will be sent to FrontController.
@@ -78,14 +78,967 @@ Jersey, RestEasy.... are implementations by 3rd party. (API jars)
 
 Jersey API for JAX-RS
 		jersey 1.x ----> web.xml based
-		jersey 2.x ----> Annotation & java code based)
-	
+		jersey 2.x ----> Annotation & Java code based
 
 Web Service: 
 	1) Implementations(services)
 	2) Security (username & pwd)
 	3) Role- Restrictions
 	
-
-EX-1
+=====================================================================================================	
+Provider Application
+====================
+EX-1: Maven project in eclipse 1: Ref:ws1
+Steps:
+	1) Create maven webapp project.
+	   File->new-other->maven->next->next-->maven-archetype-webapp (search)-->next-
+		it.rk
+		ws1
+		Finish
+		update 1.7 to 1.8 java version in pom.xml
+	2) Add tomcat server in eclipse.
+		windows-->show view->other-server
+		Click on "No server availabe...link" under server view. or right click on server view->new ->server
+		select tomcat9 and browse to tomcat9 home location
+		Finish
+	3) Link tomcat to project
+	    right click on project-> build path-->configure build path-->search server-->tomcat9->apply and close.
+	4) Add jersey-bundle maven dependency, maven compiler plugin(remove all plugins if any.), servlet-api depencedy for .jsp compile time issue.
 	
+	5) Create Java Class as follow
+====
+	package ws1;
+	
+	import javax.ws.rs.DELETE;
+	import javax.ws.rs.FormParam;
+	import javax.ws.rs.GET;
+	import javax.ws.rs.HEAD;
+	import javax.ws.rs.HeaderParam;
+	import javax.ws.rs.MatrixParam;
+	import javax.ws.rs.OPTIONS;
+	import javax.ws.rs.POST;
+	import javax.ws.rs.PUT;
+	import javax.ws.rs.Path;
+	import javax.ws.rs.QueryParam;
+	
+	@Path("/app")
+	public class ProviderApp {
+	
+		
+		@Path("/msg")
+		@GET
+		public String getMag()
+		{
+			return "Hello ws1";
+		}
+		
+		@Path("/show")
+		@GET
+		public String showQueryParams(
+										@QueryParam("id") int eid,
+										@QueryParam("name") String ename,
+										@QueryParam("sal") double esal
+		)
+		{
+			return "Hellow :"+eid+":"+ename+":"+esal;
+		}
+		
+		@Path("/disp")
+		@GET
+		public String dispMatrixParams( 
+										@MatrixParam("id") int eid,
+										@MatrixParam("name") String ename,
+										@MatrixParam("sal") double esal
+		)
+		{
+			
+			return "Hello MatrixParam: "+eid+":"+ename+":"+esal;
+		}
+		
+		
+		@Path("/store")
+		@POST
+		public String storeEmpFormParam(
+								@FormParam("id") int eid,
+								@FormParam("name") String ename,
+								@FormParam("sal") double esal
+		)
+		{
+			return "Hello FormParam: "+eid+":"+ename+":"+esal;
+		}
+		
+		@Path("/login")
+		@POST
+		public String loginPage(
+								@HeaderParam("id") String uid,
+								@HeaderParam("pwd") String pass
+		)
+		{
+			
+			return "Hello HeaderParam:"+uid+":"+pass;
+		}
+		
+		@GET
+		public String m1() {
+			return "m1";
+		}
+		
+		@POST
+		public String m2() {
+			return "m2";
+		}
+		
+		@PUT
+		public String m3() {
+			return "m3";
+		}
+		
+		@DELETE
+		public String m4() {
+			return "m4";
+		}
+		
+		@OPTIONS
+		public String m5() {
+			return "m5";
+		}
+		
+		@HEAD
+		public String m6() {
+			return "m6";
+		}
+		
+	}
+
+	6) Update web.xml
+	
+	<!DOCTYPE web-app PUBLIC
+	"-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+	"http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+	<web-app>
+		<display-name>Archetype Created Web Application</display-name>
+		<servlet>
+		<servlet-name>sample</servlet-name>
+		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+		</servlet>
+		<servlet-mapping>
+		<servlet-name>sample</servlet-name>
+		<url-pattern>/rest/*</url-pattern>
+		</servlet-mapping>
+	</web-app>
+
+	7) Right click on project ->Run as ->Run on Server.
+	8) http://localhost:8080/ws1/rest/app/msg
+	   http://localhost:8080/ws1/rest/app/
+	   
+       
+	   protocol://IPAddress:portNo/ProjectName/FCURLWebXml/ClassPath/MethodPath
+=====================================================================================================	   
+
+HTTP Methods:
+		GET -------get resource[s]
+		POST-------create new resource
+		PUT--------update existed resource
+		DELETE-----delete resource
+		HEAD-------do some work at server side return nothing
+		OPTIONS----execute multiple blocks/threads/tasks.
+=====================================================================================================	
+Consumer Application
+====================
+EX-2: Maven project in eclipse 1: Ref:client1
+Steps:
+	1) Create maven webapp project.
+		File->new->other->maven project->simple project->next->
+		it.rk
+		client1
+		Finish
+	2) Add jersey client maven dependency and maven compiler plugin
+	
+	3) Create class as below.
+====	
+	package client1;
+	
+	import com.sun.jersey.api.client.Client;
+	import com.sun.jersey.api.client.ClientResponse;
+	import com.sun.jersey.api.client.WebResource;
+	import com.sun.jersey.api.representation.Form;
+	
+	public class ClientApp {
+	
+		public static void main(String[] args) {
+	
+			showMsg("http://localhost:8080/ws1/rest/app/msg");
+			
+			System.out.println("========================");
+			showEmpQueryParam("http://localhost:8080/ws1/rest/app/show?name=ravi&sal=2000.00&id=101");
+			showEmpQueryParam("http://localhost:8080/ws1/rest/app/show");
+			showEmpQueryParam("http://localhost:8080/ws1/rest/app/show?name=ravi&sal=2000.00&id=101a");
+	
+			System.out.println("========================");
+			dispEmpMatrixParam("http://localhost:8080/ws1/rest/app/disp;name=ravi;sal=2000.00;id=101");
+			dispEmpMatrixParam("http://localhost:8080/ws1/rest/app/disp");
+			dispEmpMatrixParam("http://localhost:8080/ws1/rest/app/disp;name=ravi;sal=2000.00;id=101a");
+			
+			System.out.println("========================");
+			postEmp("http://localhost:8080/ws1/rest/app/store");
+			
+			System.out.println("======================");
+			login("http://localhost:8080/ws1/rest/app/login");
+		}
+	
+		private static void showMsg(String url) {
+	
+			// 1.Create Empty client obj
+			Client c = Client.create();
+			
+			// 2. add url to client & get WebResource obj.
+			WebResource wc = c.resource(url);
+			
+			//3. make request call .get(-) and get ClientResponse obj
+			ClientResponse cr= wc.get(ClientResponse.class);
+			
+			//4. Read entity from cr object
+			
+			System.out.println(cr.getEntity(String.class));
+			System.out.println(cr.getStatus());
+			System.out.println(cr.getStatusInfo());
+		}
+		
+		private static void showEmpQueryParam(String url)
+		{
+			//1. create Client obj
+			Client c =Client.create();
+			
+			//2. Create WebResource obj by calling c.resource(utl).
+			WebResource wr=c.resource(url);
+			
+			//Test with base url without query params & uncomment the below logic.
+			//3.add query params
+			//wr.queryParam("id", "100");
+			//wr.queryParam("name", "RaviKiran");
+			//wr.queryParam("sal", "10000.05");
+			
+			
+			//4. call get method with ClientResponse
+			ClientResponse cr= wr.get(ClientResponse.class);
+	
+			//5. Read entity from ClientResponse
+			System.out.println(cr.getEntity(String.class));
+			System.out.println(cr.getStatus());
+			System.out.println(cr.getStatusInfo());
+		}
+	
+		
+		private static void dispEmpMatrixParam(String url)
+		{
+			//1. Clear Client obj
+			Client c =Client.create();
+			
+			//2.get WebResource Obj from client .resourc(url)
+			WebResource wr = c.resource(url);
+			
+			//3. get ClientResponse by calling get(-_ method
+			ClientResponse cr=wr.get(ClientResponse.class);
+			
+			//4. get entity from Client Response.
+			System.out.println(cr.getEntity(String.class));
+			System.out.println(cr.getStatus());
+			System.out.println(cr.getStatusInfo());
+		}
+		
+		private static void postEmp(String url)
+		{
+			//1. Create Client object
+			Client c=Client.create();
+			
+			//2.Get WebResource from client.resource(-)
+			WebResource wr = c.resource(url);
+			
+			//Create Form object and add properties
+			Form f =new Form();
+			f.add("id", "201a");
+			f.add("name", "Ravi");
+			f.add("sal", 50000.05);
+			
+			//4. call post(-,-) by pssing Class type and form obj
+			ClientResponse cr=wr.post(ClientResponse.class, f);
+			
+			//5. Read entity
+			System.out.println(cr.getEntity(String.class));
+			System.out.println(cr.getStatus());
+			System.out.println(cr.getStatusInfo());
+		}
+		
+		public static void login(String url)
+		{
+			//1. Create Client object
+			Client c=Client.create();
+			
+			//2. Get WebResource from client.resourc(-)
+			WebResource wr=c.resource(url);
+			
+			//3. add header to WebResource object
+			wr.header("id", "ravi");
+			wr.header("pwd", "ABC@XYZ");
+			
+			//4. call post method by passing ClientResponse class type 
+			ClientResponse cr=wr.post(ClientResponse.class);
+			
+			//5. getEntity from ClientResponse 
+			System.out.println(cr.getEntity(String.class));
+			System.out.println(cr.getStatus());
+			System.out.println(cr.getStatusInfo());
+		}
+	}
+====	
+	package client1;
+	
+	import com.sun.jersey.api.client.Client;
+	import com.sun.jersey.api.client.ClientResponse;
+	import com.sun.jersey.api.client.WebResource;
+	
+	public class EmpApp {
+	
+		public static void main(String[] args) {
+	
+			getEmp("http://localhost:8080/ws1/rest/emp");
+			getEmps("http://localhost:8080/ws1/rest/emp/all");
+			//addEmp("http://localhost:8080/ws1/rest/e2/add");
+		}
+	
+		private static void getEmp(String url) {
+			// 1. create client object
+			Client c = Client.create();
+	
+			// 2. getWebResource object on client.
+			WebResource wr = c.resource(url);
+	
+			//3. call get method and get ClientResponse
+			ClientResponse cr = wr.get(ClientResponse.class);
+			
+			//4. Get entity from ClientResponse
+			System.out.println(cr.getEntity(String.class));
+			System.out.println(cr.getStatus());
+			System.out.println(cr.getStatusInfo());
+			System.out.println(cr.getType());
+		}
+		private static void getEmps(String url) {
+			// 1. create client object
+			Client c = Client.create();
+	
+			// 2. getWebResource object on client.
+			WebResource wr = c.resource(url);
+	
+			//3. call get method and get ClientResponse
+			ClientResponse cr = wr.get(ClientResponse.class);
+			
+			//4. Get entity from ClientResponse
+			System.out.println(cr.getEntity(String.class));
+			System.out.println(cr.getStatus());
+			System.out.println(cr.getStatusInfo());
+			System.out.println(cr.getType());
+		}
+	
+		private static void addEmp(String url)
+		{
+			Client c = Client.create();
+			WebResource wr = c.resource(url);
+			String json ="{ \"eid\":445,\"ename\":\"AA\", \"esal\":55.56 }";
+			ClientResponse cr = wr.header("Content-Type","application/json")
+			 .post(ClientResponse.class,json);
+			String str= cr.getEntity(String.class);
+			System.out.println(str);
+			System.out.println(cr.getStatus());
+			System.out.println(cr.getStatusInfo());
+			System.out.println(cr.getType());
+		}
+	}
+	
+Run: 1) ws1 app on server
+	 2) Run client1 : run as java application
+=================================================================================================
+Some HTTP status codes:
+		
+		200 OK					:Success with response
+		204 No Content			:Success with not response body
+		404 Not Found			:url is wrong(case or spell wrong)
+		405 Method Not Allowed	:url is valid but wrong method GET,POST,PUT,DELETE 
+		
+		500 Internal Server Error:  server side issue- exception, duplicate URL, duplicate method type.
+		
+		if server is down: ConnectionException, Connection Refused, IP or port is wrong.
+================================================================================================		
+Downloand and install postman app.
+================================================================================================
+Open postman:
+	GET-> http://localhost:8080/ws1/rest/app/msg
+	GET-> http://localhost:8080/ws1/rest/app/
+	POST-> http://localhost:8080/ws1/rest/app/
+	PUT-> http://localhost:8080/ws1/rest/app/
+	DELETE-> http://localhost:8080/ws1/rest/app/
+	HEAD-> http://localhost:8080/ws1/rest/app/
+	OPTIONS-> http://localhost:8080/ws1/rest/app/
+
+	404 Method Not Allowed.
+	PATCH-> http://localhost:8080/ws1/rest/app/
+	COPY-> http://localhost:8080/ws1/rest/app/
+	LINK-> http://localhost:8080/ws1/rest/app/
+	UNLINK-> http://localhost:8080/ws1/rest/app/
+	PURGE-> http://localhost:8080/ws1/rest/app/
+	LOCK-> http://localhost:8080/ws1/rest/app/
+	UNLOCK-> http://localhost:8080/ws1/rest/app/
+	PROPFIND-> http://localhost:8080/ws1/rest/app/
+	VIEW-> http://localhost:8080/ws1/rest/app/
+
+===================================================================================================
+Data Exchange in ReST Webservices
+
+Data Exchanges type in ReST:
+	1) Primitive Type Data can be passed through parameters
+	2) Global Data Format Type (XML/JSON) through HttpRequest & HttpResponse Body
+	
+Type Parameters in WS:
+----------------------
+1) Query Parameters(?,&) by default key and value are Strings by default. convertion at Provider App
+	http://.....?id=5&name=ravi
+	
+	Syntax: @QueryParam("key") DataType localVariables
+	
+	Ex: public returnType someMethod(@QueryParam("id") int eid, @QueryParam("name") String ename)
+		{
+			...
+		}
+
+		http://localhost:8080/ws1/rest/app/show?id=100&name=ravi&sal=5000.00
+		Hellow :100:ravi:5000.0
+
+		* If duplicte key=value pair occurs. FC takes 1st occurance and ignores next.
+			http://localhost:8080/ws1/rest/app/show?name=ravi&sal=2000.00&id=101&name=Kiran
+			Hellow :101:ravi:2000.0
+
+		* If key=value pair missing. default values based on type will be taken.
+			http://localhost:8080/ws1/rest/app/show?id=100
+			Hellow :100:null:0.0
+		  
+		* Key=Value pairs order is not required.
+			http://localhost:8080/ws1/rest/app/show?name=ravi&sal=2000.00&id=101
+			Hellow :101:ravi:2000.0
+		  
+		* If request has key=value pair which is not present is Provider app. thease pair are ignored by FC.
+			http://localhost:8080/ws1/rest/app/show?name=ravi&sal=2000.00&id=101&name=Kiran&abc=1000
+			Hellow :101:ravi:2000.0
+
+		* If wrong typed data passed then FC returns 404 Not Found 
+			http://localhost:8080/ws1/rest/app/show?name=ravi&sal=2000.00&id=101a
+			HTTP 404
+***) QueryParam are added in Servlet: cannot be removed.
+	 QueryParam are slow compare to MatrixParam
+	
+2) Matrix Parameters(;): same like QueryParam 
+	http://.....;id=5&name=ravi
+
+	Syntax: @MatrixParam("key") DataType localVariables
+	
+	Ex: public returnType someMethod(@MAtrixParam("id") int eid, @MatrixParam("name") String ename)
+		{
+			...
+		}
+		http://localhost:8080/ws1/rest/app/disp;id=100;name=ravi;sal=5000.00
+		Hello MatrixParam: 100:ravi:5000.0
+
+		* If duplicte key=value pair occurs. FC takes 1st occurance and ignores next.
+			http://localhost:8080/ws1/rest/app/disp;name=ravi;sal=2000.00;id=101;name=Kiran
+			Hello MatrixParam: 101:ravi:2000.0
+
+		* If key=value pair missing. default values based on type will be taken.
+			http://localhost:8080/ws1/rest/app/disp;id=100
+			Hello MatrixParam: 100:null:0.0
+		  
+		* Key=Value pairs order is not required.
+			http://localhost:8080/ws1/rest/app/disp;name=ravi;sal=2000.00;id=101
+			Hello MatrixParam: 101:ravi:2000.0
+		  
+		* If request has key=value pair which is not present is Provider app. thease pair are ignored by FC.
+			http://localhost:8080/ws1/rest/app/disp;name=ravi;sal=2000.00;id=101;name=Kiran;abc=1000
+			Hello MatrixParam: 101:ravi:2000.0
+
+		* If wrong typed data passed then FC returns 404 Not Found 
+			http://localhost:8080/ws1/rest/app/disp;name=ravi;sal=2000.00;id=101a
+			HTTP 404
+		
+		
+3) Path Parameters(/)
+	http://...../5/ravi
+
+4) Form Parameters(K,V)
+   HTML Form or Form class used in HTML Body usually in POST calls.
+   To send large amount data in hidden mode through Http Body with form parameter. key=value by default string type.
+   	i)  HTML Form (Physicl Form)
+	ii) Form class (Logical Form) **** real time we use Form class only.
+	
+	Sysntax: @FormParam("key") DataType localVariables
+
+	Ex: public returnType someMethod(@FormParam("id") int eid, @FormParam("name") String ename)
+		{
+			...
+		}
+		http://localhost:8080/ws1/rest/app/store
+		POST 
+		if we dont pass form params
+		Hello FormParam: 0:null:0.0
+		
+		http://localhost:8080/ws1/rest/app/store
+		POST 
+		body --> x-www-form-unencoded
+		id=100
+		name=Ravi
+		sal=50000.00
+		Hello FormParam: 100:Ravi:50000.0
+		
+		* If duplicte key=value pair occurs. FC takes 1st occurance and ignores next.
+		* If key=value pair missing. default values based on type will be taken.
+		* Key=Value pairs order is not required.
+		* If request has key=value pair which is not present is Provider app. thease pair are ignored by FC.
+		* If wrong typed data passed then FC returns 400 Bad Request. 
+
+5) Header Parameters(K,V)
+   [HtmlRequest Head used for secure details username,pwd, token,otp...etc]
+	
+	Header params <---- redefined and custom/programmer defined params.
+	
+	Syntax: @HeaderParam("key" DataType localVariable
+
+	Ex: public returnType someMethod(@HeaderParam("id") int uid, @FormParam("pwd") String pass)
+		{
+			...
+		}
+	
+	http://localhost:8080/ws1/rest/app/login
+	Heder params:
+		id=ravi
+		pwd=Abc@XYZ
+	Hello HeaderParam:ravi:Abc@XYZ
+	
+
+MediaTypes:
+==========
+@Consumes, @Produces are media types which are used to convert Global format data to object and object to global format data.
+
+Req[{...} or <>...</>] ---@Consumes----> Provider ----> @Produces ----> Resp [{...} or <>...</>]
+
+@Consumes:
+	It converts globl format data from HttpRequest Body and converts into Object. This object is given as input to method parameter.
+
+Syntax:
+	@Consumes(applicaion/json)
+	@Produces(applicaion/json)
+	public Model show(Product p)
+	{
+		...
+		//@Consumes ---> converts HttpsBody's json data into Product type object.
+		//@Produces ---> Convert Model type object into json for HttpResponse
+	}
+
+* Every object can be converted into Json and json to object
+* Every object can not be converted into xml. only JAXB class object can be converted into XML. To make normal classes into JAXB class use @XmlRootElement
+  annotaion at class level.
+  
+  http://localhost:8080/ws1/rest/emp
+  GET
+  Accept:application/json
+  {
+    "eid": "100",
+    "ename": "ravi",
+    "esal": "25000.0"
+  }
+  http://localhost:8080/ws1/rest/emp
+  GET
+  Accept:application/xml
+  
+    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+	<employee>
+	    <eid>100</eid>
+	    <ename>ravi</ename>
+	    <esal>25000.0</esal>
+	</employee>
+
+* Note: @Produces annotation will add "Context-Type" headerparam in HttpResponse Header.
+  http://localhost:8080/ws1/rest/emp/all
+  GET
+  Accept:application/json
+  {
+    "employee": [
+        {
+            "eid": "100",
+            "ename": "ravi",
+            "esal": "25000.0"
+        },
+        {
+            "eid": "200",
+            "ename": "kiran",
+            "esal": "34000.0"
+        }
+    ]
+  }
+  http://localhost:8080/ws1/rest/emp/all
+  GET
+  Accept:application/xml
+	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+	<employees>
+	    <employee>
+	        <eid>100</eid>
+	        <ename>ravi</ename>
+	        <esal>25000.0</esal>
+	    </employee>
+	    <employee>
+	        <eid>200</eid>
+	        <ename>kiran</ename>
+	        <esal>34000.0</esal>
+	    </employee>
+	</employees>
+	
+
+@Consumes
+	It is used to convert HttpRequest data(xml/json) to java object and gives to method parameter as input.
+	Along with data, we must specify one header "Context-Type" in HttpRequest Header else Provide throws HTTP 415 (Unsupported MediaType).
+	
+	@POST call are not working will check next.
+
+Security in Webservices
+=======================
+Autherization: if user has access to specific resource process it else reject with 401-UNAUTHORIZED
+
+	@GET
+	@Path("/show")
+	public Response show()
+	{
+		ResponseBuilder respB=new ResponseBuilderImpl();
+		respB.entity("Hello!!");
+		respB.status(Status.OK);
+		Response  resp =respB.build();
+		return resp;
+	}
+	
+	http://localhost:8080/ws1/rest/emp/show
+	GET
+	Hello!!
+	
+Basic Authentication:
+=====================
+
+Steps
+		username:password
+			|
+		encoded it
+			|
+		Basic <encodedString>
+			|
+		Add in HeaderParam Authorization = <....>
+
+	@POST
+	@Path("/show/auth")
+	public Response showAuth(@HeaderParam("Authorization") String auth)
+	{
+		ResponseBuilder r =new ResponseBuilderImpl();
+		if(auth==null || "".equals(auth.trim()))
+		{
+			return r.entity("Invalid Credentials").status(Status.UNAUTHORIZED).build();
+		}else
+		{
+			//remove Basicfrom auth
+			auth=auth.replace("Basic", " ");
+			
+			//decode the content
+			auth = new String(Base64.getDecoder().decode(auth));
+			
+			//read username & pwd
+			StringTokenizer st= new StringTokenizer(auth, ":");
+			String uname=st.nextToken();
+			String pwd=st.nextToken();
+			
+			//Compare with DB data
+			if(uname.equals("ravi") && pwd.equals("12345"))
+			{
+				r.entity("Success!!");
+				r.status(Status.OK);
+				return r.build();
+			}else
+			{
+				return r.entity("Invalid Credentials").status(Status.UNAUTHORIZED).build();
+			}
+		}
+	}
+
+* Content Negotiation through "Accept" header.	
+* @Produces( {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON} )
+* If not Accept header then repsonece type is  xml by default.
+* Auto detection of MediaType for multi-consumer: by "Content-Type" header
+* @Consumes( {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON} )
+
+URL-Uniform Resource Locator & URI-Uniform Resource Indicator
+URL may change from server to server. but URI can not.
+
+Ex: 
+	URL		http://5.32.5.6:8877/app1/res1
+	URI		app1/res1
+
+
+PathParams or PathVariables:
+===========================
+	Sending primitive data from consumer to provider can be done with Path(as Data) is known as PathVariables/PathParams.
+	Which works faster than all other parameters. i.e QueryParam, MatrixParam, FormParam, HeaderParam.
+	
+	Ex: 	http://localhost:8080/app/emp/1/ravi/50000.00
+	
+	Paths can be static/dynamic
+	If request is made then highest priority should be given to static path.
+	If no matching found then go to Dynamic Path.
+	
+	http://localhost:8080/ws1/rest/emp/msg/eid/ename/esal
+	GET
+	Hello static PathParams
+
+	http://localhost:8080/ws1/rest/emp/msg/eid/ename/54000.00
+	GET
+	Employee(eid=0, ename=null, esal=54000.0)
+
+	http://localhost:8080/ws1/rest/emp/msg/eid/ravi/54000.00
+	GET
+	Employee(eid=0, ename=ravi, esal=54000.0)
+
+	http://localhost:8080/ws1/rest/emp/msg/101/ravi/54000.00
+	GET
+	Employee(eid=101, ename=ravi, esal=54000.0)
+
+Note:
+	PathParams must follow order without key
+	If extra/less values are sent or invalid data sent then Http-404.	
+	Highest priority is given to static.
+	No default value concept is provided.
+	To read data, use @PathParam Annotation.
+
+Ref:ws2
+
+1) Create new maven project with jersey-quickstart-webapp archetype.
+	in.rk
+	ws2
+
+	delete index.jsp or add servlet api jar. 
+	Delete index.jsp
+	Delete Default MyResource.java
+2)	
+	package in.rk.ws2;
+	
+	import javax.ws.rs.GET;
+	import javax.ws.rs.Path;
+	
+	@Path("/emp")
+	public class EmpProvider {
+		@Path("/msg")
+		@GET
+		public String showMsg() {
+			return "Hello";
+		}
+	}
+3) 	
+	http://localhost:8080/ws2/webapi/emp/msg
+	GET
+	Hello
+	
+4) if any error then update jersey wersion to 2.30
+Note:
+	* While creating maven jersey quickstart project. web.xml file is created automatically with configurations.
+		FC: org.glassfish.jersey.servlet.ServletContainer
+		
+	<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    	<servlet>
+    	    <servlet-name>Jersey Web Application</servlet-name>
+    	    <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+    	    <init-param>
+    	        <param-name>jersey.config.server.provider.packages</param-name>
+    	        <param-value>in.rk.ws2</param-value>
+    	    </init-param>
+    	    <load-on-startup>1</load-on-startup>
+    	</servlet>
+    	<servlet-mapping>
+    	    <servlet-name>Jersey Web Application</servlet-name>
+    	    <url-pattern>/webapi/*</url-pattern>
+    	</servlet-mapping>
+	</web-app>
+
+	* only classes in in.rk.ws2 are considered as providers.
+
+@BeanParam:
+	It will read input parameter entered in request and convert them into one class object(OOP). We can apply this over any type of parameter.
+
+===
+	package in.rk.ws2;
+	
+	import javax.ws.rs.BeanParam;
+	import javax.ws.rs.GET;
+	import javax.ws.rs.Path;
+	
+	
+	@Path("/emp")
+	public class EmpProvider {
+		@Path("/msg")
+		@GET
+		public String showMsg() {
+			return "Hello";
+		}
+		
+		@Path("/empMsg")
+		@GET
+		public String showEmpMas(@BeanParam Emp emp)
+		{
+			return "Hellow:"+emp;
+		}
+	}
+===
+	package in.rk.ws2;
+	
+	import javax.ws.rs.QueryParam;
+	
+	import lombok.Data;
+	
+	@Data
+	public class Emp {
+	
+		private @QueryParam("id") int eid;
+		private @QueryParam("name") String ename;
+		private @QueryParam("sal") double esal;
+	}
+===
+
+	http://localhost:8080/ws2/webapi/emp/empMsg?id=1001&name=ravi&sal=5000
+	GET
+	Hellow:Emp(eid=1001, ename=ravi, esal=5000.0)
+	
+
+Jersey Advanced Coding:
+======================
+* No web.xml file required from jersey2.15+
+* Remove web.xml file and create a class which extends "Application" class directly or indirectly "ResourceConfig".
+* ResourceConfig is given glassfish behaves lie FC.
+* Used ApplicationPath("/rest") at class level. Donot use /* at the end of url.
+* Define default constructor.
+
+Project Creation:
+ref:ws3
+1. File -> new -> other -> Maven project--> jersey-quickstart-webapp
+	in.rk
+	ws3
+	Finish
+2. open pom.xml and add maven-war plugin, uncomment jersey-media-json-binding dependency.
+   comment jersey-container-servlet-core dependency for disable servlet 2.x support
+   uncomment jersey-container-servlet for servlet 3.xsupport
+   Delete index.jsp, web.xml, MyResource.java
+   
+3. Create AppConfig class extends ResourceConfig
+====
+	package in.rk.ws3;
+	
+	import org.glassfish.jersey.server.ResourceConfig;
+	
+	import jakarta.ws.rs.ApplicationPath;
+	
+	@ApplicationPath("/rest")
+	public class AppConfig extends ResourceConfig {
+		public AppConfig() 
+		{
+			packages("in.rk.ws3.resources");
+		}
+	}
+====
+4. Create Product class and ProductResource class
+====
+	package in.rk.ws3.model;
+	
+	import jakarta.json.bind.annotation.JsonbProperty;
+	import jakarta.json.bind.annotation.JsonbPropertyOrder;
+	import jakarta.json.bind.annotation.JsonbTransient;
+	import jakarta.ws.rs.PathParam;
+	import lombok.Data;
+	
+	@Data
+	@JsonbPropertyOrder({"pname","pcost"})
+	public class Product {
+	
+		@JsonbTransient
+		private @PathParam("id") int pid;
+		
+		@JsonbProperty("product-nme")
+		private @PathParam("name") String pname;
+		
+		@JsonbProperty("product-mrp")
+		private @PathParam("cost") double pcost;
+		
+		
+	}
+====
+	package in.rk.ws3.resources;
+	
+	import in.rk.ws3.model.Product;
+	import jakarta.ws.rs.BeanParam;
+	import jakarta.ws.rs.GET;
+	import jakarta.ws.rs.Path;
+	import jakarta.ws.rs.Produces;
+	import jakarta.ws.rs.core.MediaType;
+	
+	@Path("/product")
+	public class ProductResource {
+	
+		@GET
+		@Path("/get/{id}/{name}/{cost}")
+		@Produces(MediaType.APPLICATION_JSON)
+		public Product getProduct(@BeanParam Product p)
+		{
+			return p;
+		}
+	}
+====
+   
+4. Update maven project.
+
+	http://localhost:8080/ws3/rest/product/get/105/Mobile/5999.00
+	GET
+	
+========================
+@Context Data in Rest
+
+* This annotation is used to fetch objects created at Server momory for Provider classes
+  Applicable for special type of classes / interfaces not for all.
+	HttpServletRequest, 
+	ServletContext, 
+	ServletConfig, 
+	HttpHeaders,
+	UriInfo,
+	ResourceInfo etc.,,
+	
+  @Context className objName
+  @Context interface objName
+  * It will load object data from server, to read in method.
+EX:
+	public String getData(
+							@Context HttpServletRequest req,
+							@Context ResourceInfo rsinfo,
+							@Context UriInfo uri,
+							@Context HttpHeaders header) 
+	{
+		...
+	}
+
+Role Management in Rest with SecurityFilter
+===========================================
+ReST supports SecurityFilter implementation for all Resource classes (and their methods). 
+It will check username, password along with Role for requested client.
+
+If everything is valid then Request will be sent to FrontController (ServletContainer). 
+It will execute Resource method based on Path which may communicate to database using Service Layer & Data Access Layer. 
+At Last, returns Response with Entity and Status.
+
+Annotations used for Role Management are:
+	1) @PermitAll : Allows every request.
+	2) @DenyAll : No request is allowed.
+	3) @RolesAllowed : Only few requests are allowed.

@@ -39,6 +39,7 @@ public class FiCollections {
 		//print only even numbers
 		System.out.println("Print even numbers only");
 		al.stream().filter(x->x%2==0).collect(Collectors.toList()).forEach(System.out::println);
+		//al.stream().filter(a->a%2==0).forEach(System.out::println);
 		
 	}
 

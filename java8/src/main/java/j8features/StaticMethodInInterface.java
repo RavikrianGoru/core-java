@@ -26,7 +26,8 @@ public class StaticMethodInInterface {
 		interfaceA.m1();
 		interfaceA.m2();
 		classOne obj =new classOne();
-		obj.m1();
+		obj.m1();//can possible but not recommended.
+		classOne.m1();
 		//obj.m2(); compile time error m2() is not available in class.
 		
 		/*

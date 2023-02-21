@@ -1,4 +1,4 @@
-package it.rk.jsonapiapp;
+package it.rk.jsonapiapp.pojo;
 
 import java.util.List;
 import java.util.Map;

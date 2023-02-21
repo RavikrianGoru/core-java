@@ -12,10 +12,10 @@ import lombok.ToString;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
+//@Getter
+//@Setter
+//@ToString
+//@EqualsAndHashCode
 @Data
 @RequiredArgsConstructor
 public class Employee {

@@ -12,15 +12,25 @@
   Repository
   ..etc
 
-=> class, variables,
-  constructors, set/get methods, toString, hashCode with equals
+Java Class: may have the following things.
+===========
+	properties/fields/variables...
+	
+	setters
+	getters
+	constructors
+	
+	toString, equals, hashCode,...
+	
+==================================
+
 
 => Project Lombok : It is open source Java API
    It generates code for
    a. constructors
    b. set/get methods
    c. toString
-   d. hashCode with equals
+   d. hashCode with equals ...etc
 -------------------------------------------------
 package lombok
 -----------------
@@ -31,7 +41,8 @@ package lombok
 @ToString            : override toString method in our class
 @EqualsAndHashCode   :  equals(), hashCode() overriden in our clas
 
-@RequiredArgsConstructor + @NonNull : It generates selected variable Constructor
+@RequiredArgsConstructor + @NonNull : It generates Constructor with specified variable 
+									  //@NonNull is not applicable on primitive as int will not hold null.
 
 @Data = @RequiredArgsConstructor + @Getter + @Setter + @ToString + @EqualsAndHashCode
 ------------------------------------------------------------
@@ -41,15 +52,44 @@ package lombok
     Ex: Employee.java
 
 import lombok.*;
-@Setter
-@Getter
-class Employee 
+
+//@Setter
+//@Getter
+//@ToString
+//@EqualsAndHashCode
+//@Data		//@Setter,@Getter,@ToString,@EqualsAndHashCode
+
+//@NoArgsConstructor
+//@AllArgsConstructor
+
+@RequiredArgsConstructor
+public class Employee
 {
-   String empName;
+	//@NonNull Not applicable on primitive as int will not hold null.
+	private int eid;
+	@NonNull
+	private String ename;
+	private Double esal;
 }
+
 
 => compile : javac -cp lombok.jar Employee.java
 => profiler : javap Employee.class
+Compiled from "Employee.java"
+public class Employee {
+  public int getEid();
+  public java.lang.String getEname();
+  public java.lang.Double getEsal();
+  public void setEid(int);
+  public void setEname(java.lang.String);
+  public void setEsal(java.lang.Double);
+  public boolean equals(java.lang.Object);
+  protected boolean canEqual(java.lang.Object);
+  public int hashCode();
+  public java.lang.String toString();
+  public Employee(java.lang.String);
+}
+
 
 //http://www.javadecompilers.com/
 --Generated Code looks like--
@@ -57,18 +97,23 @@ class Employee
 // Decompiled by Procyon v0.5.36
 // 
 
-class Employee
-{
-    String empName;
-    
-    public void setEmpName(final String empName) {
-        this.empName = empName;
-    }
-    
-    public String getEmpName() {
-        return this.empName;
-    }
+import lombok.NonNull;
+
+public class Employee {
+  private int eid;
+  
+  @NonNull
+  private String ename;
+  
+  private Double esal;
+  
+  public Employee(@NonNull String paramString) {
+    if (paramString == null)
+      throw new NullPointerException("ename is marked non-null but is null"); 
+    this.ename = paramString;
+  }
 }
+
 --------------------------------------
 II.** IDE Installation
  1. Open Eclipse / STS 
@@ -76,7 +121,7 @@ II.** IDE Installation
  3. Add Project Lombok JAR
 
 pom.xml
-<properties>
+	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
@@ -116,7 +161,7 @@ public class Employee {
 *)If it is not working(onetime setup for one IDE)
 > Close your IDE
 > Goto .m2 location of Lombok JAR
-C:\Users\Raghu\.m2\repository\org\projectlombok\lombok\1.18.20
+C:\Users\<username>\.m2\repository\org\projectlombok\lombok\1.18.20
 
 > execute command 
   java -jar lombok-1.18.20.jar
@@ -335,20 +380,6 @@ public class Employee {
 }
 ==================================================================
 https://projectlombok.org/
-
 https://projectlombok.org/setup/intellij
-
-
 https://projectlombok.org/features/all
-
-
-FIS.close()
-FOS.close()
-
-@Cleanup InputStream in = new FileInputStream(args[0]);
-
-finally{
-  in.close();
-}
-
-https://projectlombok.org/features/all
+==================================================================

@@ -1,4 +1,10 @@
 import lombok.*;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.With;
+import lombok.experimental.NonFinal;
 
 //@Setter
 //@Getter
@@ -10,11 +16,13 @@ import lombok.*;
 //@AllArgsConstructor
 
 //@RequiredArgsConstructor
+
+@Value
 public class Employee
 {
-	//@NonNull Not applicable on primitive as int will not hold null.
-	private int eid;
-	//@NonNull
-	private String ename;
+	int eid;
+	String ename;
 	private Double esal;
+	@With(AccessLevel.PACKAGE) @NonFinal int eage;
+	
 }

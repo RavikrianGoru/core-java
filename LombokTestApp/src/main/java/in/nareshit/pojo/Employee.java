@@ -12,6 +12,7 @@ import lombok.NonNull;
 //@EqualsAndHashCode
 @Data
 //@RequiredArgsConstructor
+//@Value
 public class Employee {
 
 	@NonNull
@@ -19,4 +20,5 @@ public class Employee {
 	@NonNull
 	private String ename;
 	private Double esal;
+	//@With(AccessLevel.PACKAGE) @NonFinal int age;
 }

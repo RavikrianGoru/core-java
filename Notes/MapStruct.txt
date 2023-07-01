@@ -1,0 +1,203 @@
+Ref: https://mapstruct.org/
+
+
+What is it?
+MapStruct is a code generator that greatly simplifies the implementation of mappings between Java bean types based on a convention over configuration approach.
+The generated mapping code uses plain method invocations and thus is fast, type-safe and easy to understand.
+MapStruct is a Java annotation processor for the generation of type-safe bean mapping classes.
+
+
+Why?
+Multi-layered applications often require to map between different object models (e.g. entities and DTOs). Writing such mapping code is a tedious and error-prone task. MapStruct aims at simplifying this work by automating it as much as possible.
+
+In contrast to other mapping frameworks MapStruct generates bean mappings at compile-time which ensures a high performance, allows for fast developer feedback and thorough error checking.
+
+How?
+MapStruct is an annotation processor which is plugged into the Java compiler and can be used in command-line builds (Maven, Gradle etc.) as well as from within your preferred IDE.
+
+MapStruct uses sensible defaults but steps out of your way when it comes to configuring or implementing special behavior.
+
+
+When Mapping is required?
+In multilayered applications, data objects are used to fetch data from database and UI interacts with Models. Now data fetched into data models is required to map to Model or java beans to be passed to UI
+
+
+Basic Mapping
+=============
+To create a mapper use org.mapstruct.Msapper annotation on an interface.
+
+@Mapper
+public interface SomeNameMapper 
+{
+	OneTypeClass anyMethodName(OtherTypeClass);
+}
+case-1 both source and target object properties have same name, those properties will be mapped automatically. 
+case-1 property name is different, Mapping config required.
+@Mapper
+public interface SomeNameMapper 
+{
+	Mapping(source="srcObj.var1", target="var2")
+	//Mapping(source="var1", target="var2")
+	OneTypeClass anyMethodName(OtherTypeClass srcObj);
+
+	Mapping(source="srcObj.var2", target="var1")
+	//Mapping(source="var2", target="var1")
+	OtherTypeClass anyMethodName(OneTypeClass srcObj);
+
+}
+Custom Mapping
+Mapping Beans With Child Beans
+Mapping With Type Conversion
+Mapping With an Abstract Class
+============================================================
+Create Some DTO class & Some Entity class.
+Required Mapping DTO to Entity and Entity to DTO.
+1) Mannual mapping class by programmer.
+2) Do some configurations through annotation in Interface then Compiler will generate Mapping implementation class. 
+
+2) Create dto.Employee and entiry.Employee classes with some properties.
+	1. Create EmployeeMapper interface with two methods(any method name) declaration.
+		dto.Employee fromEntity (entity.Employee);
+		entity.Employee fromDto (dto.Employee);
+	2. 
+		
+
+@Mapper annotation at Interface level, Compiler generates MapperImpl class.
+@Mapper attributes
+	componentModel="java"
+	unmappedSourcePolicy = ReportingPolicy.WARN
+	unmappedTargetPolicy = ReportingPolicy.WARN
+	nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS
+	uses= {SomeExternalMapper.class, ....}
+
+@Mapping annotation at method level. Optional if source and target properties names and types are same.
+
+@Mapping (source="someName" target="someOtherName")
+@Mapping (source="obj.someName" target="someOtherName") 
+	if source and target property names are different.
+
+@ValueMappings & @ValueMapping are used while mapping Enums and its values are different.
+@ValueMappings({
+		@ValueMapping(source = "A", target = "GRADE_A"),
+		@ValueMapping(source = "B", target = "GRADE_B"),
+		@ValueMapping(source = "C", target = "GRADE_C"),
+		@ValueMapping(source = MappingConstants.ANY_REMAINING, target = "GRADE_D"),
+		@ValueMapping(source = MappingConstants.NULL,target = "GRADE_E")
+		
+	})
+
+@EnumMapping(nameTransformationStrategy = "suffix", configuration = "_SHIFT")
+
+@InheritInverseConfiguration is at method level. Get inverse configuration from previous method.
+	
+============================================================
+
+
+
+1) Basic Mapping: 
+	1) interface/abstract class with @Mapper annotation.
+	2) create conversion methods.
+	3) if properties names are  same in both source & target objects then those properties will be mapped automatically else @Mapping required.
+	
+	dto.Employee
+		String id;
+		String name;
+	entity.Employee
+		String id;
+		String empName;
+	
+	Ex:
+	
+	@Mapper
+	public interface SomeNameMapper {
+		@Mapping(target="empName", source="name")
+		Employee getModelFromEntity(Employee snEntity);
+	}
+	
+2) Custom Mapping:
+	We can create default method in interface for custom mapping.
+	Implemented method in abstract class for custom mapping
+
+	Ex:
+	@Mapper
+	public interface SomeNameMapper {
+		default SomeNameModel getModelFromEntity(SomeNameEntity snEntity)
+		{
+			SomeNameModel snModel=new SomeNameModel();
+			//read snEntity objects and set snModel
+			return snModel;
+		}
+	}
+	Ex: 
+	public abstarct class SomeNameMapper {
+		SomeNameModel getModelFromEntity(SomeNameEntity snEntity)
+		{
+			SomeNameModel snModel=new SomeNameModel();
+			//read snEntity objects and set snModel
+			return snModel;
+		}
+	}
+	
+3) Mapping Multiple Objects: 
+	Get an object(Object1) from different objects (Object2, Object3).
+	Employee.empAddress from Employee.homeAddress, Employee.officeAdddress
+
+4) Mapping Nested Bean:	
+	Employee.Transaction and Employee.Transaction
+
+5) Mapping Direct Fields: @InheritInverseConfiguration annotation to copy reverse configuration
+
+6) Using Builders: MapStruct allows to use Builders framework/custom builder.
+7) Implicit Type Conversion: MapStruct handles conversion of type conversions automatically in most of the cases.
+	Ex: int to Long or String conversion
+		Conversion handles null values as well.
+		Primitive typs and Wrapper classes.
+		primitive type and String
+		enum types and String
+		BigInt, BigDecimal and String
+		Calender/Date and XMLGregorianCalendar
+		XMLGregorianCalendar and String
+		Jodas date types and String
+8) Using numberFormat: MapStruct handles conversion of numbers to String in required format seamlessly.
+		use numberFormat attribute in @Mapping
+		numberFormat="$#.00"
+9) Using dateFormat: MapStruct handles conversion of date to String in required format seamlessly
+		use dateFormat attribute in @Mapping
+		dateFormat="dd.MM.yyyy"
+10) Using expression: MapStruct allows to call a conversion method for customized logic.		
+	We can use expression to achieve the same where we can pass any java object and call its method to do the conversion.
+	@Mapping(target = "target-property", expression = "java(target-method(obj.getPropName()))")
+	or
+	@Mapping(target = "target-property", expression = "java(class-name.target-method(obj.getPropName()))")
+11) Using Constants: MapStruct allows to map a constant value to a property.
+	@Mapping(target = "target-property", const = "const-value")
+12) Using DefaultValue: Using Mapstruct we can pass the default value in case source property is null using defaultValue attribute of @Mapping annotation.
+	@Mapping(target = "target-property", source="source-property", defaultValue = "default-value")
+13) Using defaultExpression: Using Mapstruct we can pass a computed value using defaultExpression in case source property is null using defaultExpression attribute of @Mapping annotation.
+	@Mapping(target = "target-property", source="source-property" defaultExpression = "default-value-method")
+14) Mapping List: Using Mapstruct we can map list in similar fashion as we map primitives. To get a list of objects, we should provide a mapper method which can map an object.
+	@Mapper
+	public interface CarMapper {
+		List<String> getListOfStrings(List<Integer> listOfIntegers);
+		List<Car> getCars(List<CarEntity> carEntities);
+		Car getModelFromEntity(CarEntity carEntity);
+	}
+15) Mapping Map: Using Mapstruct we can create mapping of map objects using @MapMapping annotation. Other rules of mapping are same as we've seen so far.
+	@Mapper
+	public interface UtilityMapper {
+		@MapMapping(valueDateFormat = "dd.MM.yyyy")
+		Map<String, String> getMap(Map<Long, GregorianCalendar> source);
+	}
+16) Mapping Stream: Using Mapstruct we can create mapping of streams in the same way as we did for collections.
+
+	@Mapper
+	public interface UtilityMapper {
+	Stream<String> getStream(Stream<Integer> source);
+	}	
+17) Mapping Enum: Mapstruct automatically maps enums. Enums with same name are mapped automatically. In case of different name, we can use @ValueMapping annotation to do the mapping.
+	@Mapper
+	public interface UtilityMapper {
+	@ValueMapping(source = "EXTRA", target = "SPECIAL")
+	PlacedOrderType getEnum(OrderType order);
+	}
+18) Throwing Exception: Mapstruct mapper allows throwing specific exception. Consider a case of custom mapping method where we want to throw our custom exception in case of invalid data.

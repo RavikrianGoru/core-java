@@ -1,7 +1,0 @@
-MVC Design
-----------
-
-
-Web pages:
-	a. Static pages: Data of page always remains same.
-	b. Dynamic pages: Data of page get modified/changed.

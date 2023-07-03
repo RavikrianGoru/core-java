@@ -1,0 +1,106 @@
+PPT Creation: 
+=============
+Case-1
+======
+1) Login : https://chat.openai.com/ with gmail.
+2) "Generate 10 slides of presentation on mapstruct "
+   we will get content.
+3) Copy the content and place in PPT slides.
+
+Case-2
+======
+1) Login: https://gamma.app/ with gmail.--> Home--> Presentation-->New With AI--> Text to Deck
+2) Login : https://chat.openai.com/ with gmail.
+3) "create ppt on mapstruct "
+   we will get content.
+4) Copy the content and place in step-1 --> Generate
+
+Case-3
+======
+1) Login: https://tome.app/  --> Try Tome--> sign up with gmail.
+   Create --> Create Presentation about... --> "MapStruct Java" --> Enter.--> Continue--> Done.
+
+
+Block Junk Emails
+=================
+1) Login https://unroll.me/   ---> signupwith Gmail.
+2) inbox--> Unsubscribe
+
+
+Read Articales free: bipass paywalls
+===================
+1) Open any artical from https://economictimes.indiatimes.com/ , https://www.moneycontrol.com/ or any site which required subscription to read.
+2) Ex: 
+	https://economictimes.indiatimes.com/markets/stocks/news/for-long-term-wealth-creation-6-largecap-stocks-with-right-mix-of-roe-roce/articleshow/101412488.cms
+	https://www.moneycontrol.com/news/business/markets/cash-market-indo-count-is-trying-to-breakout-10879881.html
+	Copy the above links and paste in below site.
+	
+2) https://12ft.io/
+
+Read any reserch paper for free: 
+================================ 
+1) open https://sci-hub.se/
+2) get reserch paper titile from linkedin or any other source.
+3) Search here.
+   Ex: Water Extract of Tamarindus Indica Seed Ash: An Agro-Waste Green Medium for One-Pot Three-Component Approach for the Synthesis of 4H-Pyran Derivatives
+
+Understanding any reserch paper is complex process the how to convert into simple text?
+=======================================================================================
+1) Browse "merlin chrome extensions" in chrome --> Add to chrome
+2) Signup merlin
+3) select any text content --> right click-->Give context to Merlin--> Use impactible words summarize in 2 lines...
+
+Summary of YouTube video:
+=========================
+1) Open any YouTube video
+2) We can see merlin summarize option --> click
+
+Intelectual post/reply in linkedIn/Facebook...etc
+=================================================
+1) Open/Login linkedin/facebook in chrome.
+2) select any post --> right click-->Give context to Merlin--> Write intellectual reply of above post--> it will give content --> Copy and paste in Linkedin/facebook
+
+Zoom presentation/Interview/Speech ...etc (Practice)
+====================================================
+1) Login https://app.yoodli.ai/
+2) Practive--> Speach/Interview -- Start--> Save.
+
+Write complicated code:
+=======================
+1) Login  https://bard.google.com/
+
+Documentation or summary of code generator:
+===========================================
+1) Open https://www.docstring.ai/ 
+2) Copy & Paste any langudate code--> select language, formate, Write Docs
+   It will generate the documentation/summary of code.
+
+Find the bug in code:
+=====================
+1. https://debugcode.ai/
+2.Copy the code and paste --> do some changes to keep some bugs.
+3. find the bugs in above code. --> Debug
+
+
+Excel formulas/SQl query: Generate excel formula from plain english text.
+====================
+1) login : https://formula.dog/
+2) Formulas --> MS Excel -->  Type: Column A contains marks of student. A1 to A5 has marks for individual subjects. if Any value in A1 to A5 less than 35 and sum of A1 to A5 <200 then Student is ailed else passed.
+3) Genrate Formula:
+	IF(OR(A1<35,A2<35,A3<35,A4<35,A5<35), "Failed","Passed") AND(A1+A2+A3+A4+A5<200,"Failed","Passed")
+Note: We can generate EXcel, SQL Query... etc.
+      Explination for Excel formula, SQL query...Regex...etc.
+
+Email ID/ Phone number from Linkedin:
+=====================================
+1) https://www.signalhire.com/
+2) SignUp ---> open linkedin---> open any user profile --> SH Hover--> reveal contacts
+
+
+
+	
+
+
+
+
+ 
